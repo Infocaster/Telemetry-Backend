@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar>
+        <MudText Typo="Typo.h5" Class="ml-3">Infocaster.Telemetry.Dashboard</MudText>
+        <MudSpacer />
+        <MudIcon Icon="@Icons.Material.Filled.Dashboard" Color="Color.Inherit" />
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer Class="mt-16 mb-16">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>

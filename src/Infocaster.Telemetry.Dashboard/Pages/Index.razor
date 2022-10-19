@@ -1,0 +1,94 @@
+﻿@page "/"
+
+<style>
+    .mud-table-foot {
+        display: initial !important;
+    }
+</style>
+
+<MudTable Items="@_reports?.OrderByDescending(x => x.Id)" Hover="true" Breakpoint="Breakpoint.Sm">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>App</MudTh>
+        <MudTh>Timestamp</MudTh>
+        <MudTh />
+    </HeaderContent>
+    <NoRecordsContent>
+        No items to display
+    </NoRecordsContent>
+    <RowTemplate>
+        <MudTd DataLabel="Number">
+            @context.Id
+        </MudTd>
+        <MudTd DataLabel="App">
+            @context.AppName
+        </MudTd>
+        <MudTd DataLabel="Timestamp">
+            <MudTooltip Text="@context.Timestamp.ToString()">
+                @context.Timestamp.Humanize(true)
+            </MudTooltip>
+        </MudTd>
+        <MudTd>
+            <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => ExpandTelemetryButtonClick(context.Id))">
+                @(context.ShowExpanded ? "Collapse" : "Expand") Telemetry
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+    <ChildRowContent>
+        @if (context.ShowExpanded)
+        {
+            <MudTr>
+                <td colspan="4">
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.body1">Telemetry for <strong>@context.AppName</strong></MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent Class="pa-0">
+                            <MudTable Items="@context.Telemetry?.OrderBy(x => x.Name)" Context="telemetry" Hover="true" Breakpoint="Breakpoint.Sm">
+                                <HeaderContent>
+                                    <MudTh>Name</MudTh>
+                                    <MudTh>Value</MudTh>
+                                </HeaderContent>
+                                <NoRecordsContent>
+                                    No items to display
+                                </NoRecordsContent>
+                                <RowTemplate>
+                                    <MudTd DataLabel="Name">@telemetry.Name</MudTd>
+                                    <MudTd DataLabel="Value">
+                                        @if (telemetry.ValueInt is not null)
+                                        {
+                                        @telemetry.ValueInt
+                                        }
+                                        else if (telemetry.ValueBool is not null)
+                                        {
+                                        @telemetry.ValueBool
+                                        }
+                                        else if (telemetry.ValueDateTime is not null)
+                                        {
+                                        <MudTooltip Text="@telemetry.ValueDateTime.ToString()">
+                                            @telemetry.ValueDateTime.Humanize(true)
+                                        </MudTooltip>
+                                        }
+                                        else if (telemetry.ValueString is not null)
+                                        {
+                                        @telemetry.ValueString
+                                        }
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </MudCardContent>
+                </MudCard>
+            </td>
+        </MudTr>
+        }
+    </ChildRowContent>
+    <FooterContent>
+        <td colspan="4" class="pa-4" style="text-align: center">
+            <MudButton Variant="Variant.Outlined" Size="Size.Small" Disabled="@(HasMoreItems() is false)" OnClick="@(() => LoadMoreItems())">
+                Show more items
+            </MudButton>
+        </td>
+    </FooterContent>
+</MudTable>
